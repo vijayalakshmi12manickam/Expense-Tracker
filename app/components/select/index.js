@@ -11,6 +11,7 @@ const Select = ({ label, optionData, onChange, value }) => {
         value={value}
         className="w-full text-gray-700 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
+        <option hidden>Select</option>
         {optionData.map((el, index) => (
           <option key={el.id}>{el.name}</option>
         ))}
