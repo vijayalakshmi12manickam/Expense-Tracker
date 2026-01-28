@@ -3,7 +3,6 @@ import Expense from "@/app/models/Expense";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  console.log("request payload", params);
   try {
     await connectDB();
     const { id } = await params;
@@ -37,5 +36,20 @@ export async function DELETE(req, { params }) {
   } catch (error) {
     console.error("❌ Error deleting expense:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+}
+
+export async function PUT(req, { params }) {
+  try {
+    await connectDB();
+    const { id } = await params;
+    const data = await req.json();
+    const updateExpense = await Expense.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+    return new Response(JSON.stringify(updateExpense), { status: 200 });
+  } catch (err) {
+    console.log("Expense update error", err);
+    return NextResponse.json({ message: "Server Error" }, { status: 500 });
   }
 }

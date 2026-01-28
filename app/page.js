@@ -6,10 +6,14 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import EditIcon from "./components/icons/edit.svg";
 import DeleteIcon from "./components/icons/delete.svg";
+import Add from "./add/page";
+import Form from "./components/form";
 
 export default function Home() {
   const [expenses, setExpenses] = useState([]);
   const [summary, setSummary] = useState({});
+  const [popup, setPopup] = useState(false);
+  const [expId, setExpId] = useState({});
 
   const getExpenses = () => {
     fetch("/api/expense")
@@ -62,21 +66,30 @@ export default function Home() {
         summaryApi();
       })
       .catch((err) => console.log(err));
+  };
 
-    // try {
-    //   const res = await fetch(`/api/expense/${id}`, {
-    //     method: "DELETE",
-    //   });
+  const addClick = () => {
+    setPopup(true);
+  };
 
-    //   const data = await res.json();
-    //   if (!res.ok) throw new Error(data.message || "Delete failed");
+  const closePopup = () => {
+    setPopup(false);
+    getExpenses();
+    summaryApi();
+    setExpId({});
+  };
 
-    // } catch (err) {
-    //   console.error(err);
-    //   alert("❌ Failed to delete expense");
-    // } finally {
-    //   console.log("finall block");
-    // }
+  const editExpense = (id) => {
+    // setPopup(true);
+
+    fetch(`/api/expense/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log("data id", data);
+        setExpId(data);
+        setPopup(true);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -86,14 +99,36 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-800">
             Recent Expenses
           </h2>
-          <Link
+          {/* <Link
             className="bg-blue-300 px-8 font-semibold text-gray-800 rounded-md"
             href="/add"
           >
             {" "}
             <p>Add</p>
-          </Link>
+          </Link> */}
+          <button
+            className="bg-blue-300 px-8 font-semibold text-gray-800 rounded-md cursor-pointer"
+            onClick={() => addClick()}
+          >
+            Add
+          </button>
         </div>
+        {popup ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
+              <div className="sm:flex sm:items-start">
+                {/* <Add /> */}
+                <Form
+                  close={() => closePopup()}
+                  expData={expId}
+                  setExpId={setExpId}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="w-full mt-8 overflow-x-auto shadow-xl">
           {expenses.length === 0 ? (
             <p className="text-gray-500 text-sm">No expenses yet.</p>
@@ -133,12 +168,14 @@ export default function Home() {
                           src={EditIcon}
                           width="20"
                           alt="edit-icon"
-                          // onClick={() => editExpense(exp._id)}
+                          className="cursor-pointer"
+                          onClick={() => editExpense(exp._id)}
                         />
                         <Image
                           src={DeleteIcon}
                           width="20"
                           alt="delete-icon"
+                          className="cursor-pointer"
                           onClick={() => onDelete(exp._id)}
                         />
                       </div>

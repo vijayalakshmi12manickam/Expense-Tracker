@@ -5,7 +5,7 @@ import Select from "../components/select";
 import Input from "../components/input";
 import moment from "moment";
 
-export default function Home() {
+export default function Add() {
   const Bank = [
     { name: "Barclays", value: "barclays", id: 1 },
     { name: "Monzo", value: "monzo", id: 2 },
