@@ -7,6 +7,7 @@ import DashboardIcon from "../icons/dashboard.svg";
 import ProfileIcon from "../icons/profile.svg";
 import ReportIcon from "../icons/report.svg";
 import CoinIcon from "../icons/coins.svg";
+import LogoIcon from "../icons/logo.svg";
 
 const Header = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -25,17 +26,31 @@ const Header = () => {
       {/* Always-visible Toggle Button */}
       <button
         onClick={() => setCollapsed((ps) => !ps)}
-        className="absolute -right-4 top-6 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-md cursor-pointer"
+        style={{ backgroundColor: "#239b6f" }}
+        className="absolute -right-4 top-12 z-10 flex h-8 w-8 items-center justify-center rounded-full text-white shadow-md cursor-pointer"
       >
         <Image src={BurgerIcon} alt="burger-icon" width="20" />
       </button>
 
       {/* Logo */}
-      <div className="flex items-center justify-center border-b py-4">
+      <div
+        style={{ backgroundColor: "#1e4846" }}
+        className="flex items-center justify-center border-b py-4"
+      >
         {collapsed ? (
-          <span className="text-lg font-bold text-blue-600">P</span>
+          <span>
+            <Image src={LogoIcon} alt={"logo"} width="30" />
+          </span>
         ) : (
-          <span className="text-xl font-bold text-blue-600">PaperTrail</span>
+          <>
+            <Image src={LogoIcon} alt={"logo"} width="30" className="mr-1" />
+            <span style={{ color: "#fefcfd" }} className="text-xl font-bold ">
+              Paper
+            </span>
+            <span style={{ color: "#239b6f" }} className="text-xl font-bold ">
+              Trail
+            </span>
+          </>
         )}
       </div>
 
@@ -44,7 +59,8 @@ const Header = () => {
         {NAV_ITEMS.map((item) => (
           <button
             key={item.label}
-            className="flex items-center space-x-3 rounded-md p-2 text-gray-700 hover:bg-blue-50"
+            style={{ color: "#1e4846" }}
+            className="flex items-center space-x-3 rounded-md p-2 font-semibold hover:bg-blue-50 cursor-pointer"
           >
             <Image src={item.image} alt={"icon"} width="20" />
             {!collapsed && <span className="text-sm">{item.label}</span>}

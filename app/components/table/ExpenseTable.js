@@ -13,7 +13,7 @@ const ExpensesTable = ({
 }) => {
   return (
     <table className="w-full border-separate bg-white shadow-md rounded-xl overflow-hidden">
-      <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+      <thead className="bg-[#1e4846] text-[#fefcfd] text-sm uppercase">
         <tr>
           <th className="py-3 px-4 text-left">S.No</th>
           <th

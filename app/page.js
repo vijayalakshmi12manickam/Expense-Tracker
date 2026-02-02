@@ -111,7 +111,8 @@ export default function Home() {
         <div className="flex justify-between mt-3 mb-3 ">
           <h2 className="text-xl font-semibold text-gray-800">Expenses</h2>
           <button
-            className="bg-blue-300 px-8 font-semibold text-gray-800 rounded-md cursor-pointer"
+            style={{ backgroundColor: "#1e4846" }}
+            className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer"
             onClick={() => addClick()}
           >
             Add
@@ -155,7 +156,7 @@ export default function Home() {
             <SummryTable summary={summary} insights={insights} />
             <div className="flex justify-end">
               <button
-                className="bg-blue-300 px-8 font-semibold text-gray-800 rounded-md cursor-pointer mt-4 py-1 flex"
+                className="bg-[#1e4846] px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer mt-4 py-1 flex"
                 onClick={() => onClickInsight()}
               >
                 {insights ? (

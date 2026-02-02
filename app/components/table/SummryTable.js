@@ -3,7 +3,7 @@ import React from "react";
 const SummryTable = ({ summary, insights }) => {
   return (
     <table className="w-full border-separate bg-white shadow-md rounded-xl overflow-hidden">
-      <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+      <thead className="bg-[#1e4846] text-[#fefcfd] text-sm uppercase">
         <tr>
           <th className="px-2 py-2">Category</th>
           <th className="px-2 py-2">current</th>
