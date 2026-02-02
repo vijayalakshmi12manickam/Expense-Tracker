@@ -47,32 +47,61 @@ export async function GET() {
   };
 
   //🔹 Fetch both summaries
-  const [currentMonthSummary, previousMonthSummary] = await Promise.all([
+  const [currentMonth, previousMonth] = await Promise.all([
     getSummary(startOfMonth, endOfMonth),
     getSummary(startOfPrevMonth, endOfPrevMonth),
   ]);
 
   // 🔹 Merge categories
   const allCategories = new Set([
-    ...currentMonthSummary.categories.map((c) => c.category),
-    ...previousMonthSummary.categories.map((c) => c.category),
+    ...currentMonth.categories.map((c) => c.category),
+    ...previousMonth.categories.map((c) => c.category),
   ]);
 
-  const merged = Array.from(allCategories).map((cat) => ({
-    category: cat,
-    currentTotal:
-      currentMonthSummary.categories.find((c) => c.category === cat)?.total ||
-      0,
-    previousTotal:
-      previousMonthSummary.categories.find((c) => c.category === cat)?.total ||
-      0,
-  }));
+  const merged = Array.from(allCategories).map((cat) => {
+    const current =
+      currentMonth.categories.find((c) => c.category === cat)?.total || 0;
+    const previous =
+      previousMonth.categories.find((c) => c.category === cat)?.total || 0;
+    const difference = parseFloat((current - previous).toFixed(2));
+    const percentageChange = previous
+      ? parseFloat((Math.abs(difference / previous) * 100).toFixed(2))
+      : current > 0
+        ? 100
+        : 0;
+
+    const trend =
+      difference > 0 ? "Increased" : difference < 0 ? "Decreased" : "No change";
+
+    return {
+      category: cat,
+      current,
+      previous,
+      difference,
+      percentageChange,
+      trend,
+    };
+  });
+
+  const overallDifference = parseFloat(
+    (currentMonth.totalAmount - previousMonth.totalAmount).toFixed(2),
+  );
+  const overallTrend =
+    overallDifference > 0
+      ? "Increased"
+      : overallDifference < 0
+        ? "Decreased"
+        : "No change";
 
   return new Response(
     JSON.stringify({
-      mergedCategories: merged,
-      currentMonthTotal: currentMonthSummary.totalAmount,
-      previousMonthTotal: previousMonthSummary.totalAmount,
+      insights: merged,
+      summary: {
+        currentMonthTotal: currentMonth.totalAmount,
+        previousMonthTotal: previousMonth.totalAmount,
+        overallDifference,
+        overallTrend,
+      },
     }),
     { status: 200 },
   );
