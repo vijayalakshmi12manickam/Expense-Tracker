@@ -5,7 +5,7 @@ import CloseIcon from "../icons/close.svg";
 import Image from "next/image";
 import moment from "moment";
 
-const Form = ({ values, close, expData, setExpId }) => {
+const Form = ({ close, expData, setExpId }) => {
   const Bank = [
     { name: "Barclays", value: "barclays", id: 1 },
     { name: "Monzo", value: "monzo", id: 2 },

@@ -35,10 +35,12 @@ export async function GET() {
     ]);
 
     if (result.length > 0) {
-      result[0].totalAmount = parseFloat(result[0].totalAmount.toFixed(2));
+      result[0].totalAmount = Number.parseFloat(
+        result[0].totalAmount.toFixed(2),
+      );
       result[0].categories = result[0].categories.map((c) => ({
         ...c,
-        total: parseFloat(c.total.toFixed(2)),
+        total: Number.parseFloat(c.total.toFixed(2)),
       }));
       return result[0];
     } else {
@@ -63,9 +65,9 @@ export async function GET() {
       currentMonth.categories.find((c) => c.category === cat)?.total || 0;
     const previous =
       previousMonth.categories.find((c) => c.category === cat)?.total || 0;
-    const difference = parseFloat((current - previous).toFixed(2));
+    const difference = Number.parseFloat((current - previous).toFixed(2));
     const percentageChange = previous
-      ? parseFloat((Math.abs(difference / previous) * 100).toFixed(2))
+      ? Number.parseFloat((Math.abs(difference / previous) * 100).toFixed(2))
       : current > 0
         ? 100
         : 0;
@@ -83,7 +85,7 @@ export async function GET() {
     };
   });
 
-  const overallDifference = parseFloat(
+  const overallDifference = Number.parseFloat(
     (currentMonth.totalAmount - previousMonth.totalAmount).toFixed(2),
   );
   const overallTrend =
