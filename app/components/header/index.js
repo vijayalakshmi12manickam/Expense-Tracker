@@ -19,7 +19,7 @@ const Header = () => {
   ];
   return (
     <div
-      className={`relative flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out ${
+      className={`relative flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out h-screen ${
         collapsed ? "w-16" : "w-56"
       }`}
     >
@@ -57,14 +57,15 @@ const Header = () => {
       {/* Nav Items */}
       <nav className="mt-4 flex flex-col space-y-1 px-2">
         {NAV_ITEMS.map((item) => (
-          <button
+          <Link
             key={item.label}
             style={{ color: "#1e4846" }}
             className="flex items-center space-x-3 rounded-md p-2 font-semibold hover:bg-blue-50 cursor-pointer"
+            href={item.value}
           >
             <Image src={item.image} alt={"icon"} width="20" />
             {!collapsed && <span className="text-sm">{item.label}</span>}
-          </button>
+          </Link>
         ))}
       </nav>
     </div>
