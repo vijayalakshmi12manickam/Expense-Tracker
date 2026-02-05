@@ -4,12 +4,20 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Form from "./components/form";
 import StarIcon from "./components/icons/star.svg";
+import OthersIcon from "./components/icons/Others.png";
+import ClothingIcon from "./components/icons/Clothing.png";
+import EntertainmentIcon from "./components/icons/Entertainment.png";
+import TravelIcon from "./components/icons/Travel.png";
+import UtilitiesIcon from "./components/icons/Utilities.png";
+import GroceriesIcon from "./components/icons/Groceries.png";
+import FoodIcon from "./components/icons/Food.png";
 import SummryTable from "./components/table/SummryTable";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
-import ExpensesTable from "./components/table/ExpenseTable";
+// import ExpensesTable from "./components/table/ExpenseTable";
 import Link from "next/link";
 import LineChart from "./components/lineChart";
+import moment from "moment";
 
 export default function Home() {
   // const [expenses, setExpenses] = useState([]);
@@ -18,6 +26,7 @@ export default function Home() {
   const [expId, setExpId] = useState({});
   const [insights, setInsight] = useState(false);
   const [chartData, setChartData] = useState([]);
+  const [chartLabel, setChartLabel] = useState([]);
   const [recentExpenses, setRecentExpenses] = useState([]);
 
   // const getExpenses = () => {
@@ -40,7 +49,9 @@ export default function Home() {
         setSummary(data);
         let res = data.insights.map(({ current }) => current);
         console.log(res);
+        let label = data.insights.map(({ category }) => category);
         setChartData(res);
+        setChartLabel(label);
       })
       .catch((err) => {
         console.log("err", err);
@@ -75,16 +86,33 @@ export default function Home() {
     setInsight((ps) => !ps);
   };
 
+  const categoryIcon = (category) => {
+    switch (category) {
+      case "Food":
+        return FoodIcon;
+
+      case "Utilities":
+        return UtilitiesIcon;
+
+      case "Entertainment":
+        return EntertainmentIcon;
+
+      case "Travel":
+        return TravelIcon;
+
+      case "Groceries":
+        return GroceriesIcon;
+
+      case "Clothing":
+        return ClothingIcon;
+
+      default:
+        return OthersIcon;
+    }
+  };
+
   const data = {
-    labels: [
-      "Clothing",
-      "Entertainment",
-      "Groceries",
-      "Food",
-      "Utilities",
-      "Travel",
-      "Others",
-    ],
+    labels: chartLabel,
     datasets: [
       {
         label: "Current Month Categories",
@@ -120,15 +148,15 @@ export default function Home() {
           generateLabels: (chart) => {
             const data = chart.data;
             const dataset = data.datasets[0];
-            const total = dataset.data.reduce((a, b) => a + b, 0);
+            // const total = dataset.data.reduce((a, b) => a + b, 0);
 
             return data.labels.map((label, i) => {
               const value = dataset.data[i];
               const color = dataset.backgroundColor[i];
-              const percent = ((value / total) * 100).toFixed(1);
+              // const percent = ((value / total) * 100).toFixed(1);
 
               return {
-                text: `${label}: (${percent}%)`,
+                text: `${label}: (${value})`,
                 fillStyle: color,
                 fontColor: "#374151",
               };
@@ -227,16 +255,34 @@ export default function Home() {
             Recent Expenses
           </h2>
           {/* <ExpensesTable display={true} expenses={recentExpenses} /> */}
-          <div className="flex border-b-black">
-            <div>
-              <Image src={StarIcon} alt="icon" width="20" />
-            </div>
-            <div>
-              <h2>Greegs</h2>
-              <p>4-02-2026</p>
-            </div>
-            <div> - 2.26</div>
-          </div>
+          {recentExpenses &&
+            recentExpenses.map((exp) => (
+              <div className="flex border-b-black bg-white p-3 rounded-xl items-center mb-2 ">
+                <div className="mr-3">
+                  <Image
+                    src={categoryIcon(exp.category)}
+                    alt="icon"
+                    width="40"
+                  />
+                </div>
+                <div className="mr-3">
+                  <h2 className="text-base font-semibold ">{exp.item}</h2>
+                  {/* <p className="text-xs text-gray-500">4-02-2026</p> */}
+                </div>
+                <div className="text-base font-semibold ">
+                  {" "}
+                  - £{exp.amount.toFixed(2)}
+                </div>
+                <div className="ml-10 flex-col shadow-md ml-auto mr-3">
+                  <div className="bg-red-500 text-xs font-bold text-white px-2">
+                    {moment(exp.date).format("MMM")}
+                  </div>
+                  <div className="text-center">
+                    {moment(exp.date).format("DD")}
+                  </div>
+                </div>
+              </div>
+            ))}
           <div className="flex justify-end mt-1">
             <Link className="text-[#1e4846] font-semibold" href="/expenses">
               ...more
@@ -249,64 +295,5 @@ export default function Home() {
         <Doughnut data={data} options={options} />
       </div>
     </div>
-    // <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-screen p-6 bg-slate-50">
-    //   <div className="md:col-span-2 rounded-lg shadow-sm p-6">
-    //     <div className="flex justify-between mt-3 mb-3 ">
-    //       <h2 className="text-xl font-semibold text-gray-800">Expenses</h2>
-    //       <button
-    //         style={{ backgroundColor: "#1e4846" }}
-    //         className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer"
-    //         onClick={() => addClick()}
-    //       >
-    //         Add Expense
-    //       </button>
-    //     </div>
-    //     {popup ? (
-    //       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    //         <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
-    //           <div className="sm:flex sm:items-start">
-    //             <Form
-    //               close={() => closePopup()}
-    //               expData={expId}
-    //               setExpId={setExpId}
-    //             />
-    //           </div>
-    //         </div>
-    //       </div>
-    //     ) : (
-    //       ""
-    //     )}
-    //   </div>
-    //   <div className="md:col-span-1">
-    //     <h2 className="text-xl font-semibold text-gray-800">Summary</h2>
-    //     {summary ? (
-    //       <div className="shadow-md rounded-xl mt-3 p-4">
-    //         <SummryTable summary={summary} insights={insights} />
-    //         <div className="flex justify-end">
-    //           <button
-    //             className="bg-[#1e4846] px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer mt-4 py-1 flex"
-    //             onClick={() => onClickInsight()}
-    //           >
-    //             {insights ? (
-    //               "Hide Insights"
-    //             ) : (
-    //               <>
-    //                 <Image
-    //                   src={StarIcon}
-    //                   alt="staricon"
-    //                   width="20"
-    //                   className="mr-1"
-    //                 />
-    //                 Insights
-    //               </>
-    //             )}
-    //           </button>
-    //         </div>
-    //       </div>
-    //     ) : (
-    //       ""
-    //     )}
-    //   </div>
-    // </div>
   );
 }
