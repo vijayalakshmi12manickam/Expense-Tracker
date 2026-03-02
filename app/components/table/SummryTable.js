@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 
 const SummryTable = ({ summary, insights }) => {
@@ -6,8 +7,10 @@ const SummryTable = ({ summary, insights }) => {
       <thead className="bg-[#1e4846] text-[#fefcfd] text-sm uppercase">
         <tr>
           <th className="px-2 py-2">Category</th>
-          <th className="px-2 py-2">current</th>
-          <th className="px-2 py-2">Previous</th>
+          <th className="px-2 py-2">{moment().format("MMM' YY")}</th>
+          <th className="px-2 py-2">
+            {moment().subtract("1", "months").format("MMM' YY")}
+          </th>
           {/* <th className="px-2 py-2">Change</th>
                   <th className="px-2 py-2">% Change</th> */}
           {insights ? <th className="px-2 py-2">Insights</th> : ""}

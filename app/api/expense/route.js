@@ -15,6 +15,7 @@ export async function POST(request) {
       category: data.category,
       date: new Date(data.date),
       amount: Number(data.amount),
+      tags: data.tags || [],
     }); //Create new expense
     return new Response(JSON.stringify(expense), { status: 201 }); //Return created expense
   } catch (err) {
@@ -30,8 +31,27 @@ export async function GET() {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   await connectDB();
+
+  const [summary] = await Expense.aggregate([
+    { $match: { date: { $gte: startOfMonth, $lt: endOfMonth } } },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$amount" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
   const expenses = await Expense.find({
     date: { $gte: startOfMonth, $lt: endOfMonth },
   }).sort({ date: -1 });
-  return new Response(JSON.stringify(expenses), { status: 200 });
+  return new Response(
+    JSON.stringify({
+      expenses,
+      total: summary?.total || 0,
+      count: summary?.count || 0,
+    }),
+    { status: 200 },
+  );
 }

@@ -85,7 +85,7 @@ export default function LineChart() {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 h-80 w-full">
+    <div className="bg-white shadow-md rounded-lg p-4  w-full">
       <div className="flex justify-between mb-4">
         <div>
           <label className="mr-2 text-sm font-medium text-gray-700">
@@ -114,16 +114,19 @@ export default function LineChart() {
             className="border rounded-md px-2 py-1"
           >
             <option value="all">All</option>
-            <option value="Food">Food</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Transport">Transport</option>
+            <option value="Clothing">Clothing</option>
             <option value="Entertainment">Entertainment</option>
+            <option value="Food">Food</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Travel">Travel</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Others">Others</option>
           </select>
         </div>
       </div>
 
       {chartData ? (
-        <div className="relative w-full" style={{ height: "250px" }}>
+        <div className="relative w-full h-[150px]">
           <Line data={chartData} options={options} />
         </div>
       ) : (

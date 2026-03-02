@@ -7,6 +7,7 @@ const ExpenseSchema = new mongoose.Schema({
   category: String,
   date: Date,
   amount: Number,
+  tags: [String],
 });
 
 export default mongoose.models.Expense ||

@@ -5,7 +5,7 @@ import CloseIcon from "../icons/close.svg";
 import Image from "next/image";
 import moment from "moment";
 
-const Form = ({ close, expData, setExpId }) => {
+const AddForm = ({ close, expData, setExpId }) => {
   const Bank = [
     { name: "Barclays", value: "barclays", id: 1 },
     { name: "Monzo", value: "monzo", id: 2 },
@@ -37,6 +37,7 @@ const Form = ({ close, expData, setExpId }) => {
     date: moment().format("yyyy-MM-DD"),
     amount: 0,
   });
+  const [tags, setTags] = useState([]);
 
   const OnChange = (value, name) => {
     console.log("value", value);
@@ -57,7 +58,10 @@ const Form = ({ close, expData, setExpId }) => {
         ...expense,
         date: new Date(expense.date),
         amount: Number(expense.amount),
+        tags: tags,
       };
+
+      console.log("tags indide", res);
 
       await fetch(`/api/expense/${expData._id}`, {
         method: "PUT",
@@ -75,10 +79,12 @@ const Form = ({ close, expData, setExpId }) => {
       close();
       setExpId({});
     } else {
+      // create expense
       const res = {
         ...expense,
         date: new Date(expense.date),
         amount: Number(expense.amount),
+        tags: tags,
       };
 
       await fetch("/api/expense", {
@@ -94,12 +100,12 @@ const Form = ({ close, expData, setExpId }) => {
         date: moment().format("yyyy-MM-DD"),
         amount: 0,
       });
+      setTags([]);
     }
   };
 
   useEffect(() => {
     if (Object.keys(expData).includes("_id")) {
-      console.log("inside", expData);
       setExpense({
         item: expData.item,
         bank: expData.bank,
@@ -108,8 +114,24 @@ const Form = ({ close, expData, setExpId }) => {
         date: moment(expData.date).format("yyyy-MM-DD"),
         amount: expData.amount,
       });
+      setTags(expData.tags);
     }
   }, [expData]);
+
+  const removeTag = (tag) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const value = e.target.value.trim();
+      if (value && !tags.includes(value)) {
+        setTags([...tags, value]);
+        e.target.value = "";
+      }
+    }
+  };
 
   return (
     <div>
@@ -143,7 +165,7 @@ const Form = ({ close, expData, setExpId }) => {
       </div>
       <div className="grid grid-cols-2 gap-5">
         <Select
-          label={"Transition type"}
+          label={"Transaction type"}
           value={expense.txnType}
           onChange={(e) => OnChange(e.target.value, "txnType")}
           optionData={TxnType}
@@ -169,7 +191,7 @@ const Form = ({ close, expData, setExpId }) => {
         </div>
         <div className="mb-5">
           <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Amount ($)
+            Amount
           </label>
           <input
             type="number"
@@ -177,6 +199,34 @@ const Form = ({ close, expData, setExpId }) => {
             value={expense.amount}
             onChange={(e) => OnChange(e.target.value, "amount")}
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+      <div className="grid mb-3">
+        <label className="block text-sm font-semibold text-gray-700 mb-1">
+          Tags
+        </label>
+        <div className="flex flex-wrap gap-2 border border-gray-300 rounded-lg px-2 py-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full flex items-center"
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => removeTag(tag)}
+                className="ml-1 text-red-500 font-bold"
+              >
+                ×
+              </button>
+            </span>
+          ))}
+          <input
+            type="text"
+            placeholder="Add tags..."
+            onKeyDown={handleTagKeyDown}
+            className="flex-grow outline-none border-none"
           />
         </div>
       </div>
@@ -192,4 +242,4 @@ const Form = ({ close, expData, setExpId }) => {
   );
 };
 
-export default Form;
+export default AddForm;
