@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TagTable from "../components/table/TagTable";
 
@@ -23,7 +23,7 @@ const Tag = () => {
   }, [search]);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading tag data...</div>}>
       {tagData && tagData?.expense?.length > 1 ? (
         <div className="ml-8 mt-4">
           <div className="flex justify-between mb-3">
@@ -39,7 +39,7 @@ const Tag = () => {
       ) : (
         ""
       )}
-    </>
+    </Suspense>
   );
 };
 
