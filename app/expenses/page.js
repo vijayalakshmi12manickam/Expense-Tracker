@@ -11,6 +11,12 @@ const Expenses = () => {
   const [popup, setPopup] = useState(false);
   const [expId, setExpId] = useState({});
   const [monthValue, setMonthValue] = useState("");
+  const [filterValue, setFilterValue] = useState({
+    item: "",
+    bank: "",
+    category: "",
+  });
+  const [filterExpenseValue, setFilterExpensesValue] = useState({});
 
   const addClick = () => {
     setPopup(true);
@@ -55,8 +61,6 @@ const Expenses = () => {
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
-
-    console.log("expenses", expenses);
 
     const expensesData = expenses?.expenses;
 
@@ -105,6 +109,47 @@ const Expenses = () => {
     }
   }, [monthValue]);
 
+  const filteredExpenses = () =>
+    (expenses.expenses || []).filter((exp) => {
+      const bankMatch = filterValue.bank ? exp.bank === filterValue.bank : true;
+      const categoryMatch = filterValue.category
+        ? exp.category === filterValue.category
+        : true;
+      return bankMatch && categoryMatch;
+    });
+
+  const filterData = (key, value) => {
+    setFilterValue((ps) => {
+      return {
+        ...ps,
+        [key]: value,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (
+      filterValue.bank.length > 1 ||
+      filterValue.category.length > 1 ||
+      filterValue.item.length > 1
+    ) {
+      console.log(filteredExpenses());
+      // setExpenses({ ...expenses, expenses: filteredExpenses() });
+    }
+  }, [filterValue]);
+
+  const checkfilter = () => {
+    if (
+      filterValue.bank.length > 1 ||
+      filterValue.category.length > 1 ||
+      filterValue.item.length > 1
+    ) {
+      return { ...expenses, expenses: filteredExpenses() };
+    } else {
+      return expenses;
+    }
+  };
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-10 mt-8 overflow-hidden">
       <div className="flex justify-between mt-3 mb-3 ">
@@ -117,14 +162,61 @@ const Expenses = () => {
           Add Expense
         </button>
       </div>
-      <div className="flex w-full justify-between items-center">
-        <div>
-          <input
-            type="month"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setMonthValue(e.target.value)}
-            value={monthValue ? monthValue : moment().format("yyyy-MM")}
-          />
+      <div className="flex w-full justify-between items-center flex-wrap gap-3">
+        <div className="flex gap-3 flex-wrap">
+          <div>
+            <input
+              type="month"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setMonthValue(e.target.value)}
+              value={monthValue ? monthValue : moment().format("yyyy-MM")}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Search item"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10"
+              // onChange={(e) => }
+            />
+          </div>
+          <div>
+            <select
+              onChange={(e) => filterData("bank", e.target.value)}
+              value={filterValue.bank}
+              className="w-full text-gray-700 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10 capitalize"
+            >
+              <option value="">All</option>
+              {[
+                ...new Set(
+                  expenses?.expenses && expenses?.expenses.map((e) => e.bank),
+                ),
+              ].map((bank) => (
+                <option className="capitalize" key={bank} value={bank}>
+                  {bank}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <select
+              onChange={(e) => filterData("category", e.target.value)}
+              value={filterValue.category}
+              className="w-full text-gray-700 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10 capitalize"
+            >
+              <option value={""}>All</option>
+              {[
+                ...new Set(
+                  expenses?.expenses &&
+                    expenses?.expenses.map((e) => e.category),
+                ),
+              ].map((cat) => (
+                <option className="capitalize" key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         {expenses && expenses.total ? (
           <div>
@@ -158,7 +250,7 @@ const Expenses = () => {
           </p>
         ) : (
           <ExpensesTable
-            expenses={expenses.expenses}
+            expenses={checkfilter()?.expenses}
             editExpense={editExpense}
             onDelete={onDelete}
             getSortSymbol={getSortSymbol}
