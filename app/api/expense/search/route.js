@@ -5,7 +5,7 @@ export async function GET(request) {
   await connectDB();
   const { searchParams } = new URL(request.url);
   const monthParam = searchParams.get("month"); // e.g. "2026-02"
-  console.log("monthParam", monthParam);
+  // console.log("monthParam", monthParam);
 
   // Default to current month if none provided
   const now = new Date();
@@ -26,7 +26,7 @@ export async function GET(request) {
   const startOfMonth = new Date(year, month, 1);
   const endOfMonth = new Date(year, month + 1, 1);
 
-  console.log("startOfMonth", startOfMonth, "endOfMonth", endOfMonth);
+  // console.log("startOfMonth", startOfMonth, "endOfMonth", endOfMonth);
 
   // Defensive check: Ensure both are valid
   if (isNaN(startOfMonth.getTime()) || isNaN(endOfMonth.getTime())) {
