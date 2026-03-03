@@ -56,7 +56,11 @@ const Expenses = () => {
       direction = "desc";
     }
 
-    const sorted = [...expenses].sort((a, b) => {
+    console.log("expenses", expenses);
+
+    const expensesData = expenses?.expenses;
+
+    const sorted = [...expensesData].sort((a, b) => {
       if (typeof a[key] === "number") {
         return direction === "asc" ? a[key] - b[key] : b[key] - a[key];
       } else {
@@ -65,20 +69,27 @@ const Expenses = () => {
           : b[key].localeCompare(a[key]);
       }
     });
-    setExpenses(sorted);
+    setExpenses({ ...expenses, expenses: sorted });
     setSortConfig({ key, direction });
   };
 
   const getExpenses = () => {
-    fetch("/api/expense")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("data", data);
-        setExpenses(data);
-      })
-      .catch((err) => {
-        console.error("❌ Error fetching expenses:", err);
-      });
+    if (monthValue) {
+      fetch(`/api/expense/search?month=${monthValue}`)
+        .then((res) => res.json())
+        .then((res) => setExpenses(res))
+        .catch((err) => console.log(err));
+    } else {
+      fetch("/api/expense")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("data", data);
+          setExpenses(data);
+        })
+        .catch((err) => {
+          console.error("❌ Error fetching expenses:", err);
+        });
+    }
   };
 
   useEffect(() => {
@@ -90,7 +101,7 @@ const Expenses = () => {
       fetch(`/api/expense/search?month=${monthValue}`)
         .then((res) => res.json())
         .then((res) => setExpenses(res))
-        .catch((err) => console.log(error));
+        .catch((err) => console.log(err));
     }
   }, [monthValue]);
 

@@ -103,22 +103,22 @@ export default function Home() {
 
   const categoryIcon = (category) => {
     switch (category) {
-      case "Food":
+      case "food":
         return FoodIcon;
 
-      case "Utilities":
+      case "utilities":
         return UtilitiesIcon;
 
-      case "Entertainment":
+      case "entertainment":
         return EntertainmentIcon;
 
-      case "Travel":
+      case "travel":
         return TravelIcon;
 
-      case "Groceries":
+      case "groceries":
         return GroceriesIcon;
 
-      case "Clothing":
+      case "clothing":
         return ClothingIcon;
 
       default:
@@ -303,7 +303,9 @@ export default function Home() {
               summary.insights &&
               summary.insights.map((insight, index) => (
                 <div key={index} className="bg-white shadow p-4 rounded-xl">
-                  <h3 className="text-gray-500">{insight.category}</h3>
+                  <h3 className="text-gray-500 capitalize">
+                    {insight.category}
+                  </h3>
                   <p className="text-2xl font-bold">{insight.current}</p>
                   <div className="flex gap-1 text-xs">
                     {insight.trend === "Decreased" ? (

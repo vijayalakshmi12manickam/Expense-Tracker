@@ -26,18 +26,20 @@ const Budget = () => {
   };
 
   useEffect(() => {
-    fetch("/api/budget")
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(categorizeBudgets(res?.budgets));
-        setBudgetData(categorizeBudgets(res?.budgets));
-      })
-      .catch((err) => console.log(err));
+    // fetch("/api/budget")
+    //   .then((res) => res.json())
+    //   .then((res) => {
+    //     console.log(categorizeBudgets(res?.budgets));
+    //     setBudgetData(categorizeBudgets(res?.budgets));
+    //   })
+    //   .catch((err) => console.log(err));
 
     fetch("/api/budget/summary")
       .then((res) => res.json())
-      .then((res) => console.log(res))
-      .catch((err) => console.log(res));
+      .then((res) => {
+        setBudgetData(categorizeBudgets(res));
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   const handleClose = () => {
