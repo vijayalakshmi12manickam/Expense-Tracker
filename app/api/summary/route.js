@@ -24,6 +24,9 @@ export async function GET() {
         },
       },
       {
+        $sort: { _id: 1 }, // 1 = ASC, -1 = DESC
+      },
+      {
         $group: {
           _id: null,
           categories: {

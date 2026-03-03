@@ -8,6 +8,7 @@ import ProfileIcon from "../icons/profile.svg";
 import ReportIcon from "../icons/report.svg";
 import CoinIcon from "../icons/coins.svg";
 import LogoIcon from "../icons/logo.svg";
+import BudgetIcon from "../icons/budget.png";
 
 const Header = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -16,10 +17,11 @@ const Header = () => {
     { label: "Expenses", value: "/expenses", image: CoinIcon },
     { label: "Report", value: "/report", image: ReportIcon },
     { label: "Profile", value: "/profile", image: ProfileIcon },
+    { label: "Budget", value: "/budget", image: BudgetIcon },
   ];
   return (
     <div
-      className={`relative flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out h-screen ${
+      className={`relative flex flex-col bg-white shadow-lg transition-all duration-300 ease-in-out ${
         collapsed ? "w-16" : "w-56"
       }`}
     >

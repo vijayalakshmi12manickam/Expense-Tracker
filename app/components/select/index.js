@@ -13,7 +13,9 @@ const Select = ({ label, optionData, onChange, value }) => {
       >
         <option hidden>Select</option>
         {optionData.map((el, index) => (
-          <option key={el.id}>{el.name}</option>
+          <option key={el.id} value={el.value}>
+            {el.name}
+          </option>
         ))}
       </select>
     </div>
