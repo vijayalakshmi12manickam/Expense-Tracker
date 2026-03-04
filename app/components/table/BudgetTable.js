@@ -51,7 +51,7 @@ const BudgetTable = ({ data }) => {
                   <div className="w-full bg-gray-200 rounded-full h-3">
                     <div
                       className={`h-3 rounded-full ${colorClass(item.percentUsed)}`}
-                      style={{ width: `${item.percentUsed}%` }}
+                      style={{ width: `${Math.min(item.percentUsed, 100)}%` }}
                     ></div>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">

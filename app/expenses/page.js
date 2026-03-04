@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import ExpensesTable from "../components/table/ExpenseTable";
 import Form from "../components/form/AddForm";
 import moment from "moment";
+import ResetIcon from "../components/icons/reset.svg";
+import Image from "next/image";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -102,6 +104,11 @@ const Expenses = () => {
 
   useEffect(() => {
     if (monthValue) {
+      setFilterValue({
+        item: "",
+        bank: "",
+        category: "",
+      });
       fetch(`/api/expense/search?month=${monthValue}`)
         .then((res) => res.json())
         .then((res) => setExpenses(res))
@@ -115,7 +122,11 @@ const Expenses = () => {
       const categoryMatch = filterValue.category
         ? exp.category === filterValue.category
         : true;
-      return bankMatch && categoryMatch;
+      const searchMatch = filterValue.item
+        ? exp.item?.toLowerCase().includes(filterValue.item) ||
+          exp.category?.toLowerCase().includes(filterValue.item)
+        : true;
+      return bankMatch && categoryMatch && searchMatch;
     });
 
   const filterData = (key, value) => {
@@ -150,6 +161,14 @@ const Expenses = () => {
     }
   };
 
+  const resetOnclick = () => {
+    setFilterValue({
+      item: "",
+      bank: "",
+      category: "",
+    });
+  };
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-10 mt-8 overflow-hidden">
       <div className="flex justify-between mt-3 mb-3 ">
@@ -163,7 +182,7 @@ const Expenses = () => {
         </button>
       </div>
       <div className="flex w-full justify-between items-center flex-wrap gap-3">
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-3 flex-wrap items-center">
           <div>
             <input
               type="month"
@@ -176,8 +195,9 @@ const Expenses = () => {
             <input
               type="text"
               placeholder="Search item"
+              value={filterValue.item}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10"
-              // onChange={(e) => }
+              onChange={(e) => filterData("item", e.target.value)}
             />
           </div>
           <div>
@@ -186,7 +206,7 @@ const Expenses = () => {
               value={filterValue.bank}
               className="w-full text-gray-700 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10 capitalize"
             >
-              <option value="">All</option>
+              <option value="">All Bank</option>
               {[
                 ...new Set(
                   expenses?.expenses && expenses?.expenses.map((e) => e.bank),
@@ -204,7 +224,7 @@ const Expenses = () => {
               value={filterValue.category}
               className="w-full text-gray-700 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10 capitalize"
             >
-              <option value={""}>All</option>
+              <option value={""}>All Category</option>
               {[
                 ...new Set(
                   expenses?.expenses &&
@@ -216,6 +236,14 @@ const Expenses = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <button
+              className="flex gap-2 cursor-pointer"
+              onClick={() => resetOnclick()}
+            >
+              <Image src={ResetIcon} alt="reset" width={"15"} /> Reset
+            </button>
           </div>
         </div>
         {expenses && expenses.total ? (
