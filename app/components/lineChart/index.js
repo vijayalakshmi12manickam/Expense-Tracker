@@ -114,13 +114,13 @@ export default function LineChart() {
             className="border rounded-md px-2 py-1"
           >
             <option value="all">All</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Food">Food</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Travel">Travel</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Others">Others</option>
+            <option value="clothing">Clothing</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="food">Food</option>
+            <option value="groceries">Groceries</option>
+            <option value="travel">Travel</option>
+            <option value="utilities">Utilities</option>
+            <option value="others">Others</option>
           </select>
         </div>
       </div>
