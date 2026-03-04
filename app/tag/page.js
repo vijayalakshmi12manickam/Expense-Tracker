@@ -23,7 +23,7 @@ const Search = () => {
 
   return (
     <>
-      {tagData && tagData?.expense?.length > 1 ? (
+      {tagData && tagData?.expense?.length >= 1 ? (
         <div className="ml-8 mt-4">
           <div className="flex justify-between mb-3">
             <h3>
