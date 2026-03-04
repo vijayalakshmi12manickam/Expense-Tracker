@@ -44,9 +44,9 @@ const Search = () => {
 
 const Tag = () => {
   return (
-    // <Suspense fallback={<div>Loading tag data...</div>}>
-    <Search />
-    // </Suspense>
+    <Suspense fallback={<div>Loading tag data...</div>}>
+      <Search />
+    </Suspense>
   );
 };
 
