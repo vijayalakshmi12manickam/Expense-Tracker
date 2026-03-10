@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 import SharedExpensesForm from "../components/form/SharedExpensesForm";
 import PopupLayout from "../components/PopupLayout";
 import SharedTable from "../components/table/SharedTable";
+import Avatar from "../components/avatar";
 
 const Shared = () => {
   const [expenses, setExpenses] = useState([]);
   const [balances, setBalances] = useState({});
+  const [userBalances, setUserBalances] = useState({});
   const [addExpensePopup, setAddExpensePopup] = useState(false);
 
   const getExpenses = () => {
@@ -24,9 +26,17 @@ const Shared = () => {
       .catch((err) => console.log(err));
   };
 
+  const getUserBalances = () => {
+    fetch("/api/expense/shared/userBalances")
+      .then((res) => res.json())
+      .then((res) => setUserBalances(res))
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getExpenses();
     getSharedBalances();
+    getUserBalances();
   }, []);
 
   console.log(balances);
@@ -57,34 +67,102 @@ const Shared = () => {
       ) : (
         ""
       )}
-      {balances && balances?.summary ? (
-        <div className="grid md:grid-cols-3 gap-6 mt-3 mb-3">
-          <div className="bg-white rounded-xl p-4 shadow">
-            <h3 className="font-semibold">{"Net Balance"}</h3>
-            {balances.summary.netBalance.toFixed(2)}
+      <div className="grid lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-3 order-2 lg:order-1 overflow-x-auto">
+          <SharedTable expenses={expenses.expenses} />
+        </div>
+        <div className="lg:col-span-2 order-1 lg:order-2">
+          {userBalances && userBalances?.summary ? (
+            <div className="grid grid-cols-3 gap-6 mt-3 mb-3 ">
+              <div className="bg-white rounded-xl p-4 shadow">
+                <h3 className="font-semibold">{"Net Balance"}</h3>
+                {userBalances.summary.totalBalance.toFixed(2)}
+              </div>
+              <div className="bg-white rounded-xl p-4 shadow text-green-600">
+                <h3 className="font-semibold">{"You are Owed"}</h3>
+                {userBalances.summary.youAreOwed.toFixed(2)}
+              </div>
+              <div className="bg-white rounded-xl p-4 shadow text-red-600">
+                <h3 className="font-semibold">{"You Owe"}</h3>
+                {userBalances.summary.youOwe.toFixed(2)}
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="grid md:grid-cols-2 md:divide-x-2 border-gray-600 bg-white rounded-lg p-4">
+            <div>
+              <h2 className="mb-2 font-semibold ml-2">You are Owed</h2>
+              {userBalances && userBalances?.youAreOwed ? (
+                userBalances.youAreOwed.map((el, i) => (
+                  <div
+                    className="hover:bg-gray-100 cursor-pointer pl-2 flex justify-between pr-4 py-2 items-center"
+                    key={i}
+                  >
+                    <div className="flex gap-2 items-center ">
+                      <Avatar name={el.person} />
+                      <p>{el.person}</p>
+                    </div>
+                    <div className="items.center">
+                      <p>{el.amount.toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>No one owe you</div>
+              )}
+            </div>
+            <div className="">
+              <h2 className="mb-2 font-semibold ml-2">You Owe</h2>
+              {userBalances && userBalances?.youOwe ? (
+                userBalances.youOwe.map((el, i) => (
+                  <div
+                    className="hover:bg-gray-100 cursor-pointer pl-2 flex justify-between pr-4 py-2 items-center"
+                    key={i}
+                  >
+                    <div className="flex gap-2 items-center ">
+                      <Avatar name={el.person} />
+                      <p>{el.person}</p>
+                    </div>
+                    <div className="items.center">
+                      <p>{el.amount.toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>You owe nothing</div>
+              )}
+            </div>
           </div>
-          <div className="bg-white rounded-xl p-4 shadow text-green-600">
-            <h3 className="font-semibold">{"You are owed"}</h3>
-            {balances.summary.owedToYou.toFixed(2)}
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow text-red-600">
-            <h3 className="font-semibold">{"You owe"}</h3>
-            {balances.summary.youOwe.toFixed(2)}
+          <div>
+            <div>
+              <table className="w-full border-separate bg-white shadow-md rounded-xl overflow-x-auto mt-4">
+                <thead className="bg-[#1e4846] text-[#fefcfd] text-sm uppercase">
+                  <tr>
+                    <th className="px-2 py-2">Person</th>
+                    <th className="px-2 py-2">Owes</th>
+                    <th className="px-2 py-2">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {balances &&
+                    balances?.settlements &&
+                    balances?.settlements.map((bal, i) => (
+                      <tr
+                        key={i}
+                        className="border-t hover:bg-gray-50 text-gray-700 text-sm transition"
+                      >
+                        <td className="px-2 py-2 capitalize">{bal.from}</td>
+                        <td className="px-2 py-2 capitalize">{bal.to}</td>
+                        <td className="px-2 py-2 ">{bal.amount.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      ) : (
-        ""
-      )}
-      {balances &&
-        balances?.settlements &&
-        balances?.settlements.map((bal, i) => (
-          <div key={`bal-${i}`}>
-            {bal.from}
-            {" owes "}
-            {bal.to} {bal.amount}
-          </div>
-        ))}
-      <SharedTable expenses={expenses.expenses} />
+      </div>
     </div>
   );
 };

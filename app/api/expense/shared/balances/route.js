@@ -84,42 +84,14 @@ export async function GET() {
     {
       $facet: {
         settlements: [{ $sort: { to: 1, from: 1 } }],
-
-        owedToYou: [
-          { $match: { to: currentUser } },
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$amount" },
-            },
-          },
-        ],
-
-        youOwe: [
-          { $match: { from: currentUser } },
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$amount" },
-            },
-          },
-        ],
       },
     },
   ]);
 
   const data = result[0];
 
-  const owedToYou = data.owedToYou[0]?.total || 0;
-  const youOwe = data.youOwe[0]?.total || 0;
-
   const response = {
     settlements: data.settlements,
-    summary: {
-      owedToYou,
-      youOwe,
-      netBalance: owedToYou - youOwe,
-    },
   };
 
   return new Response(JSON.stringify(response), { status: 200 });
