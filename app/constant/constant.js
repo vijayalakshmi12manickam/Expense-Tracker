@@ -9,3 +9,9 @@ export const categories = [
   { name: "Perosnal", value: "personal", id: 17 },
   { name: "Health", value: "health", id: 18 },
 ];
+
+export const splitTypeOption = [
+  { name: "Equal", value: "equal", id: 601 },
+  { name: "Shares", value: "shares", id: 602 },
+  { name: "Custom", value: "custom", id: 603 },
+];
