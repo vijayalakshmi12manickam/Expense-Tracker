@@ -3,17 +3,17 @@ import React from "react";
 
 const SharedTable = ({ expenses }) => {
   return (
-    <table className="w-full border-separate bg-white shadow-md rounded-xl overflow-hidden">
+    <table className="w-full border-separate bg-white shadow-md rounded-xl overflow-x-auto">
       <thead className="bg-[#1e4846] text-[#fefcfd] text-sm uppercase">
         <tr>
           <th className="px-2 py-2">Item</th>
           <th className="px-2 py-2">Category</th>
-          <th className="px-2 py-2">Date</th>
-          <th className="px-2 py-2">Paid By</th>
-          <th className="px-2 py-2">Split Type</th>
+          <th className="px-2 py-2 whitespace-nowrap">Date</th>
+          <th className="px-2 py-2 whitespace-nowrap">Paid By</th>
+          <th className="px-2 py-2 whitespace-nowrap">Split Type</th>
           <th className="px-2 py-2">Participants</th>
           <th className="px-2 py-2">Amount</th>
-          <th className="px-2 py-2">settlement</th>
+          {/* <th className="px-2 py-2">settlement</th> */}
         </tr>
       </thead>
       <tbody>
@@ -23,9 +23,11 @@ const SharedTable = ({ expenses }) => {
               key={el._id}
               className="border-t hover:bg-gray-50 text-gray-700 text-sm transition"
             >
-              <td className="px-2 py-2 capitalize">{el.item}</td>
+              <td className="px-2 py-2 capitalize whitespace-nowrap">
+                {el.item}
+              </td>
               <td className="px-2 py-2 capitalize">{el.category}</td>
-              <td className="px-2 py-2">
+              <td className="px-2 py-2 whitespace-nowrap">
                 {moment(el.date).format("DD-MM-YYYY")}
               </td>
               <td className="px-2 py-2 capitalize">{el.paidBy}</td>
@@ -38,13 +40,13 @@ const SharedTable = ({ expenses }) => {
                 ))}
               </td>
               <td className="px-2 py-2">{el.totalAmount}</td>
-              <td className="px-2 py-2 ">
+              {/* <td className="px-2 py-2 ">
                 {el.settlement.map((set, i) => (
                   <div key={`set-${i}`}>
                     {set.person} owes {set.owes} {set.amount}
                   </div>
                 ))}
-              </td>
+              </td> */}
             </tr>
           ))}
       </tbody>
