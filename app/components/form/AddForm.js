@@ -216,7 +216,7 @@ const AddForm = ({ close, expData, setExpId }) => {
               <button
                 type="button"
                 onClick={() => removeTag(tag)}
-                className="ml-1 text-red-500 font-bold"
+                className="ml-1 text-red-500 font-bold cursor-pointer"
               >
                 ×
               </button>

@@ -16,6 +16,11 @@ export async function POST(request) {
       date: new Date(data.date),
       amount: Number(data.amount),
       tags: data.tags || [],
+      isShared: data.isShared,
+      paidBy: data.paidBy || "You",
+      splitType: data.splitType || "",
+      participants: data.participants || [],
+      totalAmount: data.totalAmount || 0,
     }); //Create new expense
     return new Response(JSON.stringify(expense), { status: 201 }); //Return created expense
   } catch (err) {

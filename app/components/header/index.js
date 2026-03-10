@@ -9,6 +9,7 @@ import ReportIcon from "../icons/report.svg";
 import CoinIcon from "../icons/coins.svg";
 import LogoIcon from "../icons/logo.svg";
 import BudgetIcon from "../icons/budget.png";
+import SharedIcon from "../icons/people.svg";
 
 const Header = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -18,6 +19,7 @@ const Header = () => {
     { label: "Report", value: "/report", image: ReportIcon },
     { label: "Profile", value: "/profile", image: ProfileIcon },
     { label: "Budget", value: "/budget", image: BudgetIcon },
+    { label: "Shared", value: "/shared", image: SharedIcon },
   ];
   return (
     <div

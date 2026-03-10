@@ -25,6 +25,7 @@ import PlusIcon from "./components/icons/Plus.png";
 import { useRouter } from "next/navigation";
 import BudgetForm from "./components/form/BudgetForm";
 import PopupLayout from "./components/PopupLayout";
+import SharedExpensesForm from "./components/form/SharedExpensesForm";
 
 export default function Home() {
   // const [expenses, setExpenses] = useState([]);
@@ -37,6 +38,7 @@ export default function Home() {
   const [recentExpenses, setRecentExpenses] = useState([]);
   const [addOpen, setAddOpen] = useState(false);
   const [budgetPopup, setBudgetPopup] = useState(false);
+  const [sharedExpensePopup, setSharedExpensePopup] = useState(false);
 
   const menuRef = useRef();
 
@@ -217,13 +219,6 @@ export default function Home() {
   return (
     <div className="w-full max-w-[1300px] mt-5 mx-auto">
       <div className="flex justify-end px-4">
-        {/* <button
-          style={{ backgroundColor: "#1e4846" }}
-          className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer"
-          onClick={() => addClick()}
-        >
-          Add Expense
-        </button> */}
         <div>
           <button
             className="cursor-pointer"
@@ -232,22 +227,33 @@ export default function Home() {
             <Image src={PlusIcon} alt="plus" width={"30"} />
           </button>
           {addOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+            <div className="absolute right-0 mt-2 w-50 bg-white border border-gray-200 rounded-lg shadow-lg z-20 text-sm">
               <button
                 onClick={() => {
                   setAddOpen(false);
                   addClick();
                 }}
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
               >
                 ➕ Add Expense
               </button>
               <button
                 onClick={() => {
+                  setSharedExpensePopup(true);
+                  setAddOpen(false);
+                  // setBudgetPopup(false);
+                }}
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+              >
+                👥 Add Shared Expense
+              </button>
+
+              <button
+                onClick={() => {
                   setAddOpen(false);
                   setBudgetPopup(true);
                 }}
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
               >
                 💰 Add Budget
               </button>
@@ -272,11 +278,25 @@ export default function Home() {
         {budgetPopup ? (
           <PopupLayout>
             <div className="bg-white w-full max-w-md p-6 relative">
-              <BudgetForm close={() => budgetClose()} />
+              <BudgetForm closeOnClick={() => budgetClose()} />
             </div>
           </PopupLayout>
         ) : (
           ""
+        )}
+        {sharedExpensePopup ? (
+          <PopupLayout>
+            <div className="p-6">
+              <SharedExpensesForm
+                closeOnClick={() => {
+                  setSharedExpensePopup(false);
+                  setAddOpen(false);
+                }}
+              />
+            </div>
+          </PopupLayout>
+        ) : (
+          " "
         )}
       </div>
       {summary && summary.summary ? (
