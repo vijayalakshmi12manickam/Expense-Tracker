@@ -1,28 +1,21 @@
 import connectDB from "@/app/lib/mongodb";
 import Expense from "@/app/models/Expense";
+import Settlement from "@/app/models/Settlement";
 
 export async function GET() {
   await connectDB();
 
-  const currentUser = "You";
+  const balances = await Expense.aggregate([
+    { $match: { isShared: true } },
 
-  const result = await Expense.aggregate([
-    {
-      $match: { isShared: true },
-    },
+    { $unwind: "$participants" },
 
-    {
-      $unwind: "$participants",
-    },
-
-    // Remove payer's own share
     {
       $match: {
         $expr: { $ne: ["$participants.name", "$paidBy"] },
       },
     },
 
-    // Create transactions
     {
       $project: {
         from: "$participants.name",
@@ -31,68 +24,59 @@ export async function GET() {
       },
     },
 
-    // Normalize pair
     {
-      $addFields: {
-        pair: {
-          $cond: [
-            { $lt: ["$from", "$to"] },
-            { a: "$from", b: "$to" },
-            { a: "$to", b: "$from" },
-          ],
-        },
-        direction: {
-          $cond: [{ $lt: ["$from", "$to"] }, 1, -1],
-        },
+      $unionWith: {
+        coll: "settlements",
+        pipeline: [
+          {
+            $project: {
+              from: "$from",
+              to: "$to",
+              amount: { $multiply: ["$amount", -1] },
+            },
+          },
+        ],
       },
     },
 
-    {
-      $project: {
-        a: "$pair.a",
-        b: "$pair.b",
-        signedAmount: { $multiply: ["$amount", "$direction"] },
-      },
-    },
-
-    // Net balances per pair
     {
       $group: {
-        _id: { a: "$a", b: "$b" },
-        balance: { $sum: "$signedAmount" },
+        _id: {
+          from: "$from",
+          to: "$to",
+        },
+        amount: { $sum: "$amount" },
       },
     },
 
+    // 🔹 Fix negative direction
     {
       $project: {
-        _id: 0,
         from: {
-          $cond: [{ $gt: ["$balance", 0] }, "$_id.a", "$_id.b"],
+          $cond: [{ $lt: ["$amount", 0] }, "$_id.to", "$_id.from"],
         },
         to: {
-          $cond: [{ $gt: ["$balance", 0] }, "$_id.b", "$_id.a"],
+          $cond: [{ $lt: ["$amount", 0] }, "$_id.from", "$_id.to"],
         },
-        amount: { $abs: "$balance" },
+        amount: { $abs: "$amount" },
       },
     },
 
-    {
-      $match: { amount: { $gt: 0 } },
-    },
+    { $match: { amount: { $gt: 0 } } },
 
-    // Dashboard calculations
     {
-      $facet: {
-        settlements: [{ $sort: { to: 1, from: 1 } }],
+      $sort: {
+        from: 1,
+        to: 1,
       },
     },
   ]);
 
-  const data = result[0];
-
-  const response = {
-    settlements: data.settlements,
-  };
-
-  return new Response(JSON.stringify(response), { status: 200 });
+  return new Response(
+    JSON.stringify({
+      settlements: balances,
+      count: balances.length,
+    }),
+    { status: 200 },
+  );
 }

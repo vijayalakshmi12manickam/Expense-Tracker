@@ -39,7 +39,7 @@ const SharedTable = ({ expenses }) => {
                   </div>
                 ))}
               </td>
-              <td className="px-2 py-2">{el.totalAmount}</td>
+              <td className="px-2 py-2">{el.totalAmount.toFixed(2)}</td>
               {/* <td className="px-2 py-2 ">
                 {el.settlement.map((set, i) => (
                   <div key={`set-${i}`}>

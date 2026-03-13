@@ -9,14 +9,17 @@ export async function GET() {
   const balances = await Expense.aggregate([
     { $match: { isShared: true } },
 
+    // expand participants
     { $unwind: "$participants" },
 
+    // ignore payer's own share
     {
       $match: {
         $expr: { $ne: ["$participants.name", "$paidBy"] },
       },
     },
 
+    // convert expense to transaction
     {
       $project: {
         from: "$participants.name",
@@ -25,7 +28,25 @@ export async function GET() {
       },
     },
 
-    // convert transactions relative to current user
+    // merge settlements collection
+    {
+      $unionWith: {
+        coll: "settlements",
+        pipeline: [
+          {
+            $project: {
+              from: "$from",
+              to: "$to",
+              amount: {
+                $multiply: ["$amount", -1],
+              },
+            },
+          },
+        ],
+      },
+    },
+
+    // convert relative to current user
     {
       $project: {
         person: {

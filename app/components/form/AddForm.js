@@ -11,7 +11,7 @@ const AddForm = ({ close, expData, setExpId }) => {
     { name: "Monzo", value: "monzo", id: 2 },
     { name: "Aqua", value: "aqua", id: 3 },
     { name: "Lloyds", value: "lloyds", id: 4 },
-    { name: "Viji Monzo", value: "vijimonzo", id: 5 },
+    { name: "Viji Monzo", value: "viji monzo", id: 5 },
   ];
   const TxnType = [
     { name: "Card", value: "card", id: 6 },
@@ -36,6 +36,11 @@ const AddForm = ({ close, expData, setExpId }) => {
     category: "",
     date: moment().format("yyyy-MM-DD"),
     amount: 0,
+    isShared: false,
+    paidBy: "You",
+    splitType: "equal",
+    participants: [],
+    totalAmount: 0,
   });
   const [tags, setTags] = useState([]);
 
@@ -75,6 +80,11 @@ const AddForm = ({ close, expData, setExpId }) => {
         category: "",
         date: moment().format("yyyy-MM-DD"),
         amount: 0,
+        isShared: false,
+        paidBy: "You",
+        splitType: "equal",
+        participants: [],
+        totalAmount: 0,
       });
       close();
       setExpId({});
@@ -99,6 +109,11 @@ const AddForm = ({ close, expData, setExpId }) => {
         category: "",
         date: moment().format("yyyy-MM-DD"),
         amount: 0,
+        isShared: false,
+        paidBy: "You",
+        splitType: "equal",
+        participants: [],
+        totalAmount: 0,
       });
       setTags([]);
     }
@@ -113,6 +128,11 @@ const AddForm = ({ close, expData, setExpId }) => {
         category: expData.category,
         date: moment(expData.date).format("yyyy-MM-DD"),
         amount: expData.amount,
+        isShared: expData.isShared,
+        paidBy: "You",
+        splitType: "equal",
+        participants: [],
+        totalAmount: 0,
       });
       setTags(expData.tags);
     }

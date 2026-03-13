@@ -18,7 +18,6 @@ const Expenses = () => {
     bank: "",
     category: "",
   });
-  const [filterExpenseValue, setFilterExpensesValue] = useState({});
 
   const addClick = () => {
     setPopup(true);
@@ -197,7 +196,7 @@ const Expenses = () => {
               placeholder="Search item"
               value={filterValue.item}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 h-10"
-              onChange={(e) => filterData("item", e.target.value)}
+              onChange={(e) => filterData("item", e.target.value.toLowerCase())}
             />
           </div>
           <div>
