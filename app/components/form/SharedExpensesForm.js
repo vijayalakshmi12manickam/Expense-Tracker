@@ -8,7 +8,7 @@ import { splitTypeOption, categories } from "../../constant/constant";
 import Image from "next/image";
 import CloseIcon from "../../components/icons/close.svg";
 
-const MultiSelectInput = ({ array, label, placeholder, keyDown }) => {
+const MultiSelectInput = ({ array, label, placeholder, keyDown, remove }) => {
   return (
     <div>
       <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -16,19 +16,23 @@ const MultiSelectInput = ({ array, label, placeholder, keyDown }) => {
       </label>
       <div className="flex flex-wrap gap-2 border border-gray-300 rounded-lg px-2 py-2">
         {array.length
-          ? array.map((el) => (
+          ? array.map((el, i) => (
               <span
                 key={el.name}
                 className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full flex items-center"
               >
                 {el.name}
-                <button
-                  type="button"
-                  //onClick={() => removeTag(tag)}
-                  className="ml-1 text-red-500 font-bold"
-                >
-                  ×
-                </button>
+                {array.length > 1 && i > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => remove(i)}
+                    className="ml-1 text-red-500 font-bold cursor-pointer"
+                  >
+                    ×
+                  </button>
+                ) : (
+                  ""
+                )}
               </span>
             ))
           : ""}
@@ -152,8 +156,6 @@ const SharedExpensesForm = ({ closeOnClick }) => {
     setParticipants(newParticipants);
   };
 
-  console.log({ ...value, participants });
-
   const participantsUpdate = (participants) => {
     const newParticipants = JSON.parse(JSON.stringify(participants));
     if (value.splitType === "equal") {
@@ -192,8 +194,23 @@ const SharedExpensesForm = ({ closeOnClick }) => {
       body: JSON.stringify(res),
     })
       .then((res) => res.json())
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        console.log(res);
+        setParticipants([{ name: "You", share: 1, amount: 0 }]);
+        setValue({
+          item: "",
+          bank: "shared",
+          txnType: "shared",
+          category: "",
+          amount: 0,
+          date: moment().format("yyyy-MM-DD"),
+          isShared: true,
+          paidBy: "",
+          splitType: "",
+          totalAmount: "",
+        });
+      });
+    setTags([]).catch((err) => console.log(err));
   };
 
   const totalCustom = participants.reduce(
@@ -215,6 +232,13 @@ const SharedExpensesForm = ({ closeOnClick }) => {
     setTags(tags.filter((t) => t !== tag));
   };
 
+  const removeParticipants = (i) => {
+    const newArray = JSON.parse(JSON.stringify(participants));
+    if (i >= 0 && i < newArray.length) {
+      newArray.splice(i, 1);
+      setParticipants(newArray);
+    }
+  };
   return (
     <div>
       <div className="mb-3 flex justify-between">
@@ -235,6 +259,7 @@ const SharedExpensesForm = ({ closeOnClick }) => {
           label={"Participants"}
           placeholder={"Enter participants"}
           keyDown={handleParKeyDown}
+          remove={removeParticipants}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">

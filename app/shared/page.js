@@ -5,12 +5,17 @@ import SharedExpensesForm from "../components/form/SharedExpensesForm";
 import PopupLayout from "../components/PopupLayout";
 import SharedTable from "../components/table/SharedTable";
 import Avatar from "../components/avatar";
+import SettlementForm from "../components/form/SettlementForm";
+import SettlementCard from "../components/SettlementCard";
 
 const Shared = () => {
   const [expenses, setExpenses] = useState([]);
   const [balances, setBalances] = useState({});
   const [userBalances, setUserBalances] = useState({});
   const [addExpensePopup, setAddExpensePopup] = useState(false);
+  const [settlementPopup, setSettlementPopup] = useState(false);
+  const [transPopUp, setTransPopup] = useState(false);
+  const [transName, setTransName] = useState("");
 
   const getExpenses = () => {
     fetch("/api/expense/shared")
@@ -39,29 +44,53 @@ const Shared = () => {
     getUserBalances();
   }, []);
 
-  console.log(balances);
-
   const handlePopup = () => {
     setAddExpensePopup(false);
     getExpenses();
+    // getSharedBalances();
+    getUserBalances();
+  };
+
+  const handleSettlementPopup = () => {
+    setSettlementPopup(false);
+    getSharedBalances();
+    getUserBalances();
   };
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-10 mt-8 overflow-hidden">
       <div className="flex justify-between mt-3 mb-3 ">
         <h2 className="text-xl font-semibold text-gray-800">Shared Expenses</h2>
-        <button
-          style={{ backgroundColor: "#1e4846" }}
-          className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer"
-          onClick={() => setAddExpensePopup(true)}
-        >
-          Add Shared Expense
-        </button>
+        <div>
+          <button
+            style={{ backgroundColor: "#1e4846" }}
+            className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer mr-2"
+            onClick={() => setSettlementPopup(true)}
+          >
+            Settle Up
+          </button>
+          <button
+            style={{ backgroundColor: "#1e4846" }}
+            className="px-8 font-semibold text-[#fefcfd] rounded-md cursor-pointer"
+            onClick={() => setAddExpensePopup(true)}
+          >
+            Add Shared Expense
+          </button>
+        </div>
       </div>
       {addExpensePopup ? (
         <PopupLayout>
           <div className="p-6">
             <SharedExpensesForm closeOnClick={() => handlePopup()} />
+          </div>
+        </PopupLayout>
+      ) : (
+        ""
+      )}
+      {settlementPopup ? (
+        <PopupLayout>
+          <div className="p-6">
+            <SettlementForm closeOnClick={() => handleSettlementPopup()} />
           </div>
         </PopupLayout>
       ) : (
@@ -98,6 +127,10 @@ const Shared = () => {
                   <div
                     className="hover:bg-gray-100 cursor-pointer pl-2 flex justify-between pr-4 py-2 items-center"
                     key={i}
+                    onClick={() => {
+                      setTransPopup(true);
+                      setTransName(el.person);
+                    }}
                   >
                     <div className="flex gap-2 items-center ">
                       <Avatar name={el.person} />
@@ -119,6 +152,10 @@ const Shared = () => {
                   <div
                     className="hover:bg-gray-100 cursor-pointer pl-2 flex justify-between pr-4 py-2 items-center"
                     key={i}
+                    onClick={() => {
+                      setTransPopup(true);
+                      setTransName(el.person);
+                    }}
                   >
                     <div className="flex gap-2 items-center ">
                       <Avatar name={el.person} />
@@ -162,6 +199,23 @@ const Shared = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        {transPopUp ? (
+          <PopupLayout>
+            <div className="p-6 md:min-w-md">
+              <SettlementCard
+                name={transName}
+                close={() => {
+                  setTransName("");
+                  setTransPopup(false);
+                }}
+              />
+            </div>
+          </PopupLayout>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
